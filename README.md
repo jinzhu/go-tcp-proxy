@@ -7,7 +7,7 @@ This project was intended for debugging text-based protocols. The next version w
 ## Usage
 
 ```
-go get github.com/jpillora/go-tcp-proxy/cmd/tcp-proxy
+go get github.com/jinzhu/go-tcp-proxy/cmd/tcp-proxy
 ```
 
 ```
