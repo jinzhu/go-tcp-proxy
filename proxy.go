@@ -125,10 +125,12 @@ func (p *Proxy) pipe(src, dst io.ReadWriter) {
 	for {
 		n, err := src.Read(buff)
 		if err != nil {
-			if islocal {
-				p.Log.Debug("Local connection read error, got %v", err)
-			} else {
-				p.Log.Debug("Remote connection read error, got %v", err)
+			if !p.erred {
+				if islocal {
+					p.Log.Debug("Local connection read error, got %v", err)
+				} else {
+					p.Log.Debug("Remote connection read error, got %v", err)
+				}
 			}
 
 			p.err("Read failed '%s'\n", err)
@@ -153,10 +155,12 @@ func (p *Proxy) pipe(src, dst io.ReadWriter) {
 		//write out result
 		n, err = dst.Write(b)
 		if err != nil {
-			if islocal {
-				p.Log.Debug("Local connection write error, got %v", err)
-			} else {
-				p.Log.Debug("Remote connection write error, got %v", err)
+			if !p.erred {
+				if islocal {
+					p.Log.Debug("Local connection write error, got %v", err)
+				} else {
+					p.Log.Debug("Remote connection write error, got %v", err)
+				}
 			}
 
 			p.err("Write failed '%s'\n", err)
