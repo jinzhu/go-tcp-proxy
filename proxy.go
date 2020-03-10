@@ -11,7 +11,8 @@ type Proxy struct {
 	sentBytes     uint64
 	receivedBytes uint64
 	laddr, raddr  *net.TCPAddr
-	lconn, rconn  io.ReadWriteCloser
+	lconn         *net.TCPConn
+	rconn         io.ReadWriteCloser
 	erred         bool
 	errsig        chan bool
 	tlsUnwrapp    bool
@@ -72,16 +73,16 @@ func (p *Proxy) Start() {
 
 	//nagles?
 	if p.Nagles {
-		if conn, ok := p.lconn.(setNoDelayer); ok {
-			conn.SetNoDelay(true)
-		}
+		// if conn, ok := p.lconn.(setNoDelayer); ok {
+		p.lconn.SetNoDelay(true)
+		// }
 		if conn, ok := p.rconn.(setNoDelayer); ok {
 			conn.SetNoDelay(true)
 		}
 	}
 
 	//display both ends
-	p.Log.Info("Opened %s >>> %s", p.laddr.String(), p.raddr.String())
+	p.Log.Info("Opened [%v] %s >>> %s", p.lconn.RemoteAddr().String(), p.laddr.String(), p.raddr.String())
 
 	//bidirectional copy
 	go p.pipe(p.lconn, p.rconn)
